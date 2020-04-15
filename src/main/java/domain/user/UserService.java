@@ -11,4 +11,8 @@ public class UserService {
         return userRepository.create(user);
     }
 
+    public String signIn(UserLoginInfo userLoginInfo) {
+        return userRepository.signIn(userLoginInfo);
+    }
+
 }

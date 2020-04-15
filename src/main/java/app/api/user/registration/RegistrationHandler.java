@@ -1,4 +1,4 @@
-package app.api.user;
+package app.api.user.registration;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -55,7 +55,6 @@ public class RegistrationHandler extends Handler {
 
         RegistrationResponse response = new RegistrationResponse(userId);
 
-        return new ResponseEntity<>(response,
-            getHeaders(Constants.CONTENT_TYPE, Constants.APPLICATION_JSON), StatusCode.OK);
+        return new ResponseEntity<>(response, getHeaders(Constants.CONTENT_TYPE, Constants.APPLICATION_JSON), StatusCode.OK);
     }
 }

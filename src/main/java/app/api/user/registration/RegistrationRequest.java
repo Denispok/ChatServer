@@ -1,8 +1,7 @@
-package app.api.user;
+package app.api.user.registration;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Value;
 
 @Data
 @NoArgsConstructor

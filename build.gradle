@@ -14,4 +14,5 @@ repositories {
 
 dependencies {
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.9.7'
+    implementation 'com.auth0:java-jwt:3.10.2'
 }

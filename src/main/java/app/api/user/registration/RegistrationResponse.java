@@ -1,4 +1,4 @@
-package app.api.user;
+package app.api.user.registration;
 
 import lombok.Value;
 
