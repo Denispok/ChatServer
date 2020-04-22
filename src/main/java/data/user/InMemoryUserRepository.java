@@ -1,13 +1,14 @@
 package data.user;
 
+import domain.user.UserRepository;
+import domain.user.model.EditUser;
+import domain.user.model.NewUser;
+import domain.user.model.User;
+import domain.user.model.UserLoginInfo;
+
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-
-import domain.user.UserLoginInfo;
-import domain.user.NewUser;
-import domain.user.User;
-import domain.user.UserRepository;
 
 public class InMemoryUserRepository implements UserRepository {
 
@@ -24,6 +25,20 @@ public class InMemoryUserRepository implements UserRepository {
         USER_STORE.put(id, user);
 
         return id;
+    }
+
+    @Override
+    public String edit(String userId, EditUser user) {
+        User currentUser = USER_STORE.get(userId);
+        if (currentUser == null) return null;
+
+        User editedUser = User.builder().id(userId)
+            .login(user.getLogin() != null ? user.getLogin() : currentUser.getLogin())
+            .password(user.getPassword() != null ? user.getPassword() : currentUser.getPassword())
+            .build();
+        USER_STORE.put(editedUser.getId(), editedUser);
+
+        return editedUser.getId();
     }
 
     /**

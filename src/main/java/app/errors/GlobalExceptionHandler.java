@@ -36,6 +36,10 @@ public class GlobalExceptionHandler {
             InvalidRequestException exc = (InvalidRequestException) throwable;
             responseBuilder.message(exc.getMessage()).code(exc.getCode());
             exchange.sendResponseHeaders(400, 0);
+        } else if (throwable instanceof UnauthorizedException) {
+            UnauthorizedException exc = (UnauthorizedException) throwable;
+            responseBuilder.message(exc.getMessage()).code(exc.getCode());
+            exchange.sendResponseHeaders(401, 0);
         } else if (throwable instanceof ResourceNotFoundException) {
             ResourceNotFoundException exc = (ResourceNotFoundException) throwable;
             responseBuilder.message(exc.getMessage()).code(exc.getCode());

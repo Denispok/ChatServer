@@ -2,6 +2,7 @@ package app;
 
 import app.api.session.login.LoginHandler;
 import app.api.session.token.TokenHandler;
+import app.api.user.edit.EditHandler;
 import app.api.user.registration.RegistrationHandler;
 import com.sun.net.httpserver.HttpServer;
 
@@ -17,7 +18,10 @@ class Application {
         HttpServer server = HttpServer.create(new InetSocketAddress(serverPort), 0);
 
         RegistrationHandler registrationHandler = new RegistrationHandler(getUserService(), getObjectMapper(), getErrorHandler());
-        server.createContext("/api/user/registration/signup", registrationHandler::handle);
+        server.createContext("/api/user/register", registrationHandler::handle);
+
+        EditHandler editHandler = new EditHandler(getUserService(), getObjectMapper(), getErrorHandler());
+        server.createContext("/api/user/edit", editHandler::handle);
 
         LoginHandler loginHandler = new LoginHandler(getSessionService(), getObjectMapper(), getErrorHandler());
         server.createContext("/api/auth/login", loginHandler::handle);

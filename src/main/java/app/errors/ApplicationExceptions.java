@@ -9,6 +9,10 @@ public class ApplicationExceptions {
         return thr -> new InvalidRequestException(400, thr.getMessage());
     }
 
+    public static Supplier<RuntimeException> unauthorized(String message) {
+        return () -> new UnauthorizedException(401, message);
+    }
+
     public static Supplier<RuntimeException> methodNotAllowed(String message) {
         return () -> new MethodNotAllowedException(405, message);
     }

@@ -40,6 +40,7 @@ public abstract class Handler {
 
     protected <T> byte[] writeResponse(T response) {
         try {
+            if (response == null) return new byte[0];
             return objectMapper.writeValueAsBytes(response);
         } catch (Exception e) {
             throw ApplicationExceptions.invalidRequest().apply(e);

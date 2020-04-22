@@ -1,12 +1,13 @@
-package domain.user;
+package domain.user.model;
 
 import lombok.Builder;
 import lombok.Value;
 
 @Value
 @Builder
-public class UserLoginInfo {
+public class User {
 
+    String id;
     String login;
     String password;
 }

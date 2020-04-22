@@ -10,7 +10,7 @@ import app.api.ResponseEntity;
 import app.api.StatusCode;
 import app.errors.ApplicationExceptions;
 import app.errors.GlobalExceptionHandler;
-import domain.user.NewUser;
+import domain.user.model.NewUser;
 import domain.user.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.HttpExchange;

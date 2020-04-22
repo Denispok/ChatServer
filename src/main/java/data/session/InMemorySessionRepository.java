@@ -7,6 +7,7 @@ import domain.session.Session;
 import domain.session.SessionRepository;
 import domain.session.Tokens;
 
+import java.security.interfaces.RSAPublicKey;
 import java.util.Date;
 import java.util.Map;
 import java.util.UUID;
@@ -15,11 +16,17 @@ import java.util.concurrent.TimeUnit;
 
 public class InMemorySessionRepository implements SessionRepository {
 
-    private static final Algorithm algorithm = Algorithm.HMAC512("secret");
+    private static final RSAKeyStore rsaKeyStore = new RSAKeyStore();
+    private static final Algorithm algorithm = Algorithm.RSA512(rsaKeyStore.getPublicKey(), rsaKeyStore.getPrivateKey());
 
     private static final Long JWT_EXPIRES_TIME_MILLIS = TimeUnit.SECONDS.toMillis(30);
     private static final Long REFRESH_EXPIRES_TIME_MILLIS = TimeUnit.MINUTES.toMillis(2);
     private static final Map<String, Session> SESSION_STORE = new ConcurrentHashMap<>();
+
+    @Override
+    public RSAPublicKey getRSAPublicKey() {
+        return rsaKeyStore.getPublicKey();
+    }
 
     @Override
     public Tokens createTokens(String userId) {
