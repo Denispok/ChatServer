@@ -1,11 +1,8 @@
 package app.api.session.login;
 
-import app.api.Constants;
-import app.api.Handler;
-import app.api.ResponseEntity;
-import app.api.StatusCode;
-import app.errors.ApplicationExceptions;
-import app.errors.GlobalExceptionHandler;
+import app.api.*;
+import app.error.GlobalExceptionHandler;
+import app.error.exception.ResourceNotFoundException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.HttpExchange;
 import domain.session.SessionService;
@@ -14,7 +11,6 @@ import domain.user.model.UserLoginInfo;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 
 public class LoginHandler extends Handler {
 
@@ -28,20 +24,9 @@ public class LoginHandler extends Handler {
 
     @Override
     protected void execute(HttpExchange exchange) throws IOException {
-        byte[] response;
-        if ("POST".equals(exchange.getRequestMethod())) {
-            ResponseEntity<LoginResponse> responseEntity = doPost(exchange.getRequestBody());
-            exchange.getResponseHeaders().putAll(responseEntity.getHeaders());
-            exchange.sendResponseHeaders(responseEntity.getStatusCode().getCode(), 0);
-            response = super.writeResponse(responseEntity.getBody());
-        } else {
-            throw ApplicationExceptions.methodNotAllowed(
-                "Method " + exchange.getRequestMethod() + " is not allowed for " + exchange.getRequestURI()).get();
-        }
-
-        OutputStream os = exchange.getResponseBody();
-        os.write(response);
-        os.close();
+        super.checkMethod(exchange, HttpMethod.POST);
+        ResponseEntity<LoginResponse> responseEntity = doPost(exchange.getRequestBody());
+        super.sendResponse(exchange, responseEntity);
     }
 
     private ResponseEntity<LoginResponse> doPost(InputStream is) {
@@ -58,7 +43,7 @@ public class LoginHandler extends Handler {
         if (tokens != null) {
             response = new LoginResponse(tokens.getRefreshToken(), tokens.getJwt());
         } else {
-            throw ApplicationExceptions.notFound("User not found").get();
+            throw new ResourceNotFoundException("User not found");
         }
 
         return new ResponseEntity<>(response, getHeaders(Constants.CONTENT_TYPE, Constants.APPLICATION_JSON), StatusCode.OK);

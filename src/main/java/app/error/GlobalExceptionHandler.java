@@ -1,13 +1,18 @@
-package app.errors;
-
-import java.io.IOException;
-import java.io.OutputStream;
+package app.error;
 
 import app.api.Constants;
 import app.api.ErrorResponse;
 import app.api.ErrorResponse.ErrorResponseBuilder;
+import app.api.StatusCode;
+import app.error.exception.InvalidRequestException;
+import app.error.exception.MethodNotAllowedException;
+import app.error.exception.ResourceNotFoundException;
+import app.error.exception.UnauthorizedException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.HttpExchange;
+
+import java.io.IOException;
+import java.io.OutputStream;
 
 public class GlobalExceptionHandler {
 
@@ -34,23 +39,23 @@ public class GlobalExceptionHandler {
         ErrorResponseBuilder responseBuilder = ErrorResponse.builder();
         if (throwable instanceof InvalidRequestException) {
             InvalidRequestException exc = (InvalidRequestException) throwable;
-            responseBuilder.message(exc.getMessage()).code(exc.getCode());
-            exchange.sendResponseHeaders(400, 0);
+            responseBuilder.code(StatusCode.BAD_REQUEST.getCode()).message(exc.getMessage());
+            exchange.sendResponseHeaders(StatusCode.BAD_REQUEST.getCode(), 0);
         } else if (throwable instanceof UnauthorizedException) {
             UnauthorizedException exc = (UnauthorizedException) throwable;
-            responseBuilder.message(exc.getMessage()).code(exc.getCode());
-            exchange.sendResponseHeaders(401, 0);
+            responseBuilder.code(StatusCode.UNAUTHORIZED.getCode()).message(exc.getMessage());
+            exchange.sendResponseHeaders(StatusCode.UNAUTHORIZED.getCode(), 0);
         } else if (throwable instanceof ResourceNotFoundException) {
             ResourceNotFoundException exc = (ResourceNotFoundException) throwable;
-            responseBuilder.message(exc.getMessage()).code(exc.getCode());
-            exchange.sendResponseHeaders(404, 0);
+            responseBuilder.code(StatusCode.NOT_FOUND.getCode()).message(exc.getMessage());
+            exchange.sendResponseHeaders(StatusCode.NOT_FOUND.getCode(), 0);
         } else if (throwable instanceof MethodNotAllowedException) {
             MethodNotAllowedException exc = (MethodNotAllowedException) throwable;
-            responseBuilder.message(exc.getMessage()).code(exc.getCode());
-            exchange.sendResponseHeaders(405, 0);
+            responseBuilder.code(StatusCode.METHOD_NOT_ALLOWED.getCode()).message(exc.getMessage());
+            exchange.sendResponseHeaders(StatusCode.METHOD_NOT_ALLOWED.getCode(), 0);
         } else {
-            responseBuilder.code(500).message(throwable.getMessage());
-            exchange.sendResponseHeaders(500, 0);
+            responseBuilder.code(StatusCode.INTERNAL_SERVER_ERROR.getCode()).message(throwable.getMessage());
+            exchange.sendResponseHeaders(StatusCode.INTERNAL_SERVER_ERROR.getCode(), 0);
         }
         return responseBuilder.build();
     }

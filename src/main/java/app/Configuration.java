@@ -1,6 +1,6 @@
 package app;
 
-import app.errors.GlobalExceptionHandler;
+import app.error.GlobalExceptionHandler;
 import data.session.InMemorySessionRepository;
 import data.user.InMemoryUserRepository;
 import domain.session.SessionRepository;
