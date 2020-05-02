@@ -1,6 +1,7 @@
 package domain.user;
 
 import app.Configuration;
+import app.error.exception.UnauthorizedException;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -39,7 +40,7 @@ public class UserService {
             DecodedJWT decodedJWT = verifier.verify(jwt);
             userId = decodedJWT.getClaim("userId").asString();
         } catch (JWTVerificationException exception) {
-            return null;
+            throw new UnauthorizedException("JWT not valid");
         }
         return userRepository.edit(userId, user);
     }

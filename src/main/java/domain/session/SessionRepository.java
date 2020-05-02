@@ -1,5 +1,8 @@
 package domain.session;
 
+import app.error.exception.ResourceNotFoundException;
+import domain.session.model.Tokens;
+
 import java.security.interfaces.RSAPublicKey;
 
 public interface SessionRepository {
@@ -8,6 +11,5 @@ public interface SessionRepository {
 
     Tokens createTokens(String userId);
 
-    Tokens updateTokens(String refreshToken);
-
+    Tokens updateTokens(String refreshToken) throws ResourceNotFoundException;
 }

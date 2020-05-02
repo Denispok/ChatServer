@@ -12,7 +12,7 @@ public class RSAKeyStore {
     private final RSAPrivateKey rsaPrivateKey;
 
     public RSAKeyStore() {
-        KeyPairGenerator kpg = null;
+        KeyPairGenerator kpg;
         try {
             kpg = KeyPairGenerator.getInstance("RSA");
         } catch (NoSuchAlgorithmException e) {

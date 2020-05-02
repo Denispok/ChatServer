@@ -6,7 +6,7 @@ import app.error.exception.ResourceNotFoundException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.HttpExchange;
 import domain.session.SessionService;
-import domain.session.Tokens;
+import domain.session.model.Tokens;
 
 import java.io.IOException;
 import java.io.InputStream;

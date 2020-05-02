@@ -1,5 +1,7 @@
 package data.user;
 
+import app.error.exception.ConflictException;
+import app.error.exception.ResourceNotFoundException;
 import domain.user.UserRepository;
 import domain.user.model.EditUser;
 import domain.user.model.NewUser;
@@ -17,32 +19,42 @@ public class InMemoryUserRepository implements UserRepository {
     @Override
     public String create(NewUser newUser) {
         String id = UUID.randomUUID().toString();
+
+        var userWithGivenLogin = USER_STORE.values().stream()
+            .filter(u -> u.getLogin().equals(newUser.getLogin()))
+            .findAny()
+            .orElse(null);
+        if (userWithGivenLogin != null) throw new ConflictException("This login already used");
+
         User user = User.builder()
             .id(id)
             .login(newUser.getLogin())
             .password(newUser.getPassword())
             .build();
-        USER_STORE.put(id, user);
 
+        USER_STORE.put(id, user);
         return id;
     }
 
+    /**
+     * @return userId
+     */
     @Override
     public String edit(String userId, EditUser user) {
         User currentUser = USER_STORE.get(userId);
-        if (currentUser == null) return null;
+        if (currentUser == null) throw new ResourceNotFoundException("User not found");
 
         User editedUser = User.builder().id(userId)
             .login(user.getLogin() != null ? user.getLogin() : currentUser.getLogin())
             .password(user.getPassword() != null ? user.getPassword() : currentUser.getPassword())
             .build();
-        USER_STORE.put(editedUser.getId(), editedUser);
 
+        USER_STORE.put(editedUser.getId(), editedUser);
         return editedUser.getId();
     }
 
     /**
-     * @return userId if login/password correct, null otherwise.
+     * @return userId if login/password correct
      */
     @Override
     public String signIn(UserLoginInfo userLoginInfo) {
@@ -55,6 +67,6 @@ public class InMemoryUserRepository implements UserRepository {
             return user.getId();
         }
 
-        return null;
+        throw new ResourceNotFoundException("User not found");
     }
 }

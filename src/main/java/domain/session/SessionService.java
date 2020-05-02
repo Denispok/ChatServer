@@ -1,6 +1,7 @@
 package domain.session;
 
 import app.Configuration;
+import domain.session.model.Tokens;
 import domain.user.model.UserLoginInfo;
 import lombok.AllArgsConstructor;
 
@@ -17,8 +18,6 @@ public class SessionService {
 
     public Tokens signIn(UserLoginInfo userLoginInfo) {
         var userId = Configuration.getUserService().signIn(userLoginInfo);
-        if (userId == null) return null;
-
         return sessionRepository.createTokens(userId);
     }
 

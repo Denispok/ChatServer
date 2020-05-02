@@ -1,4 +1,4 @@
-package domain.session;
+package domain.session.model;
 
 import lombok.Data;
 

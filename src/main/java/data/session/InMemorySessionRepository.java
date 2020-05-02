@@ -1,11 +1,12 @@
 package data.session;
 
+import app.error.exception.ResourceNotFoundException;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
-import domain.session.Session;
+import domain.session.model.Session;
 import domain.session.SessionRepository;
-import domain.session.Tokens;
+import domain.session.model.Tokens;
 
 import java.security.interfaces.RSAPublicKey;
 import java.util.Date;
@@ -32,43 +33,34 @@ public class InMemorySessionRepository implements SessionRepository {
     public Tokens createTokens(String userId) {
         long refreshExpiresAt = System.currentTimeMillis() + REFRESH_EXPIRES_TIME_MILLIS;
         Session session = createSession(userId, refreshExpiresAt);
-        SESSION_STORE.put(session.getRefreshToken(), session);
-
         String jwt = createJWT(userId);
-        if (jwt == null) return null;
 
+        SESSION_STORE.put(session.getRefreshToken(), session);
         return new Tokens(session.getRefreshToken(), jwt);
     }
 
     @Override
     public Tokens updateTokens(String refreshToken) {
         var currentSession = SESSION_STORE.get(refreshToken);
-        if (currentSession == null) return null;
-        if (currentSession.getExpiresAt() <= System.currentTimeMillis()) return null;
+        if (currentSession == null) throw new ResourceNotFoundException("Refresh token not found");
+        if (currentSession.getExpiresAt() <= System.currentTimeMillis()) throw new ResourceNotFoundException("Token is expired");
 
         Session newSession = createSession(currentSession.getUserId(), currentSession.getExpiresAt());
+        String jwt = createJWT(newSession.getUserId());
+
         SESSION_STORE.put(newSession.getRefreshToken(), newSession);
         SESSION_STORE.remove(currentSession.getRefreshToken());
-
-        String jwt = createJWT(newSession.getUserId());
-        if (jwt == null) return null;
 
         return new Tokens(newSession.getRefreshToken(), jwt);
     }
 
-    private String createJWT(String userId) {
-        String jwt;
+    private String createJWT(String userId) throws JWTCreationException {
         long jwtExpiresAt = System.currentTimeMillis() + JWT_EXPIRES_TIME_MILLIS;
 
-        try {
-            jwt = JWT.create()
-                .withClaim("userId", userId)
-                .withExpiresAt(new Date(jwtExpiresAt))
-                .sign(algorithm);
-        } catch (JWTCreationException exception) {
-            exception.printStackTrace();
-            return null;
-        }
+        String jwt = JWT.create()
+            .withClaim("userId", userId)
+            .withExpiresAt(new Date(jwtExpiresAt))
+            .sign(algorithm);
 
         return jwt;
     }

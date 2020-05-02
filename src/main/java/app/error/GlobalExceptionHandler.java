@@ -4,10 +4,7 @@ import app.api.Constants;
 import app.api.ErrorResponse;
 import app.api.ErrorResponse.ErrorResponseBuilder;
 import app.api.StatusCode;
-import app.error.exception.InvalidRequestException;
-import app.error.exception.MethodNotAllowedException;
-import app.error.exception.ResourceNotFoundException;
-import app.error.exception.UnauthorizedException;
+import app.error.exception.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.HttpExchange;
 
@@ -53,6 +50,10 @@ public class GlobalExceptionHandler {
             MethodNotAllowedException exc = (MethodNotAllowedException) throwable;
             responseBuilder.code(StatusCode.METHOD_NOT_ALLOWED.getCode()).message(exc.getMessage());
             exchange.sendResponseHeaders(StatusCode.METHOD_NOT_ALLOWED.getCode(), 0);
+        } else if (throwable instanceof ConflictException) {
+            ConflictException exc = (ConflictException) throwable;
+            responseBuilder.code(StatusCode.CONFLICT.getCode()).message(exc.getMessage());
+            exchange.sendResponseHeaders(StatusCode.CONFLICT.getCode(), 0);
         } else {
             responseBuilder.code(StatusCode.INTERNAL_SERVER_ERROR.getCode()).message(throwable.getMessage());
             exchange.sendResponseHeaders(StatusCode.INTERNAL_SERVER_ERROR.getCode(), 0);
