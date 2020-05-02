@@ -4,8 +4,8 @@ import app.error.exception.ResourceNotFoundException;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
-import domain.session.model.Session;
 import domain.session.SessionRepository;
+import domain.session.model.Session;
 import domain.session.model.Tokens;
 
 import java.security.interfaces.RSAPublicKey;
@@ -13,16 +13,20 @@ import java.util.Date;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
 
 public class InMemorySessionRepository implements SessionRepository {
 
-    private static final RSAKeyStore rsaKeyStore = new RSAKeyStore();
-    private static final Algorithm algorithm = Algorithm.RSA512(rsaKeyStore.getPublicKey(), rsaKeyStore.getPrivateKey());
+    private final RSAKeyStore rsaKeyStore = new RSAKeyStore();
+    private final Algorithm algorithm = Algorithm.RSA512(rsaKeyStore.getPublicKey(), rsaKeyStore.getPrivateKey());
 
-    private static final Long JWT_EXPIRES_TIME_MILLIS = TimeUnit.SECONDS.toMillis(30);
-    private static final Long REFRESH_EXPIRES_TIME_MILLIS = TimeUnit.MINUTES.toMillis(2);
-    private static final Map<String, Session> SESSION_STORE = new ConcurrentHashMap<>();
+    private final Long JWT_EXPIRES_TIME_MILLIS;
+    private final Long REFRESH_EXPIRES_TIME_MILLIS;
+    private final Map<String, Session> SESSION_STORE = new ConcurrentHashMap<>();
+
+    public InMemorySessionRepository(Long jwtExpiresTimeMillis, Long refreshExpiresTimeMillis) {
+        JWT_EXPIRES_TIME_MILLIS = jwtExpiresTimeMillis;
+        REFRESH_EXPIRES_TIME_MILLIS = refreshExpiresTimeMillis;
+    }
 
     @Override
     public RSAPublicKey getRSAPublicKey() {
