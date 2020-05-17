@@ -1,6 +1,6 @@
 package data.session;
 
-import app.error.exception.ResourceNotFoundException;
+import app.error.exception.UnauthorizedException;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
@@ -46,8 +46,8 @@ public class InMemorySessionRepository implements SessionRepository {
     @Override
     public Tokens updateTokens(String refreshToken) {
         var currentSession = SESSION_STORE.get(refreshToken);
-        if (currentSession == null) throw new ResourceNotFoundException("Refresh token not found");
-        if (currentSession.getExpiresAt() <= System.currentTimeMillis()) throw new ResourceNotFoundException("Token is expired");
+        if (currentSession == null) throw new UnauthorizedException("Refresh token not found");
+        if (currentSession.getExpiresAt() <= System.currentTimeMillis()) throw new UnauthorizedException("Token is expired");
 
         Session newSession = createSession(currentSession.getUserId(), currentSession.getExpiresAt());
         String jwt = createJWT(newSession.getUserId());

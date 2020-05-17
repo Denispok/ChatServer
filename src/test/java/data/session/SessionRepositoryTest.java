@@ -1,6 +1,5 @@
 package data.session;
 
-import app.error.exception.ResourceNotFoundException;
 import app.error.exception.UnauthorizedException;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
@@ -52,7 +51,7 @@ class SessionRepositoryTest {
     @Test
     void updateTokensTest() {
         final var userId = UUID.randomUUID().toString();
-        assertThrows(ResourceNotFoundException.class, () -> sessionRepository.updateTokens(userId));
+        assertThrows(UnauthorizedException.class, () -> sessionRepository.updateTokens(userId));
 
         var tokens = sessionRepository.createTokens(userId);
         Tokens newTokens;
@@ -61,7 +60,7 @@ class SessionRepositoryTest {
             newTokens = sessionRepository.updateTokens(tokens.getRefreshToken());
 
             final Tokens previousTokens = tokens;
-            assertThrows(ResourceNotFoundException.class, () -> sessionRepository.updateTokens(previousTokens.getRefreshToken()));
+            assertThrows(UnauthorizedException.class, () -> sessionRepository.updateTokens(previousTokens.getRefreshToken()));
             tokens = newTokens;
 
             String userIdFromJWT;
@@ -104,7 +103,7 @@ class SessionRepositoryTest {
         }
 
         sleep(REFRESH_EXPIRES_TIME_MILLIS + 1000);
-        assertThrows(ResourceNotFoundException.class, () -> sessionRepository.updateTokens(newTokens.getRefreshToken()));
+        assertThrows(UnauthorizedException.class, () -> sessionRepository.updateTokens(newTokens.getRefreshToken()));
     }
 
     private void sleep(long millis) {

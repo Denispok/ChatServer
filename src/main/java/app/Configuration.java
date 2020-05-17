@@ -2,6 +2,7 @@ package app;
 
 import app.error.GlobalExceptionHandler;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import data.session.InMemorySessionRepository;
 import data.user.InMemoryUserRepository;
 import domain.session.SessionRepository;
@@ -13,7 +14,8 @@ import java.util.concurrent.TimeUnit;
 
 public class Configuration {
 
-    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper()
+        .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
 
     private static final UserRepository USER_REPOSITORY = new InMemoryUserRepository();
     private static final UserService USER_SERVICE = new UserService(USER_REPOSITORY);

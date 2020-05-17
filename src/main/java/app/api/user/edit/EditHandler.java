@@ -39,6 +39,6 @@ public class EditHandler extends Handler {
         String userId = userService.edit(jwt, user);
         if (userId == null) throw new ResourceNotFoundException("Internal error");
 
-        return new ResponseEntity<>(null, getHeaders(Constants.CONTENT_TYPE, Constants.APPLICATION_JSON), StatusCode.OK);
+        return new ResponseEntity<>(EmptyResponse.instance, getHeaders(Constants.CONTENT_TYPE, Constants.APPLICATION_JSON), StatusCode.OK);
     }
 }
